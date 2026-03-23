@@ -16,6 +16,7 @@ A production-ready FastAPI boilerplate designed for rapid project setup — feat
 - 🧪 **Pytest** for testing
 - 📊 **Logging** configured and ready to use
 - 🔧 **Makefile** for convenient development
+- 🔄 **GitHub Actions**: pytest + Docker build (`.github/workflows/ci.yml`)
 
 ## Quick Start
 
@@ -196,25 +197,22 @@ PASSWORD =
 - TTL (Time To Live) management
 - Multiple key deletion support
 
-#### Health Check
-- Database connectivity check
-- Redis connectivity check
-- Returns 200 (healthy) or 503 (unhealthy)
-- Accessible at `/api/root/health`
+#### Health checks
+- **`GET /health/live`** — liveness (process up, no dependencies)
+- **`GET /health/ready`** — readiness (database reachable)
+- **`GET /api/root/health`** — full check: database + Redis; returns 200 or 503
 
 
 ## Testing
 
 ```bash
-# Run all tests
+pip install -r requirements.txt -r requirements-dev.txt
 make test
-
-# Run with coverage
-pytest --cov=src --cov-report=html
-
-# Run specific test
-pytest tests/test_api.py -v
 ```
+
+`requirements-dev.txt` adds **pytest**, **pytest-cov**, and **ruff** (same pattern as `make lint` / `make format`). For coverage only: `pytest tests/ -v --cov=src --cov-report=html`.
+
+If `config.ini` is missing locally, `tests/conftest.py` copies `config.ini.example` so imports from `src.config` succeed during test collection.
 
 ## Development
 
